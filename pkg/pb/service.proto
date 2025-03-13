@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package random;
+
+option go_package = "github.com/fasttrack-solutions/random/pkg/pb";
+
+
+service Random {
+  rpc GetRandomFloat64(GetRandomFloat64Request) returns (GetRandomFloat64Response);
+  rpc GetRandomInt64(GetRandomInt64Request) returns (GetRandomInt64Response);
+}
+
+message GetRandomFloat64Request {}
+
+message GetRandomFloat64Response {
+  double number = 1;
+}
+
+message GetRandomInt64Request {
+  int32 min = 1;
+  int32 max = 2;
+}
+
+message GetRandomInt64Response {
+  int64 number = 1;
+}
