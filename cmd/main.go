@@ -107,6 +107,9 @@ func main() {
 
 	case "Exit":
 		return
+
+	default:
+		fmt.Println("oops... selected test is not yet implemented")
 	}
 
 	// generateRandom(100)
