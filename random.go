@@ -8,7 +8,7 @@ import (
 	"math/big"
 )
 
-// UniformInt64 generates an int which is greater than or equal to min and less than max using a uniform distribution
+// UniformInt64 generates an int64 in the range (min, max) using a uniform distribution
 func UniformInt64(min int64, max int64) (int64, error) {
 	num := max - min + 1
 	res, err := rand.Int(rand.Reader, big.NewInt(int64(num)))
@@ -19,6 +19,7 @@ func UniformInt64(min int64, max int64) (int64, error) {
 	return res.Int64() + min, nil
 }
 
+// UniformFloat64 generates a float64 in the range (0, 1] using a uniform distribution
 func UniformFloat64() (float64, error) {
 	var b [8]byte
 	_, err := rand.Read(b[:])
@@ -30,7 +31,10 @@ func UniformFloat64() (float64, error) {
 	return Truncate(r, 9), nil
 }
 
-// TransformToExponential transforms a number between (0,1) using exponential distribution
+// TransformToExponential transforms a float64 between (0,1) to (0,1) using a linear to exponential transformation
+// The aggression parameter must be larger than 5 and less than 100
+// The progression parameter must be between 0 and 1
+// i.e. TransformToExponential(10, 0.5) ->
 func TransformToExponential(aggression float64, progression float64) (float64, error) {
 	if aggression < 5 || aggression > 100 {
 		return 0, fmt.Errorf("aggression must be between 5 and 100")
