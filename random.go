@@ -2,7 +2,9 @@ package random
 
 import (
 	"crypto/rand"
+	"crypto/sha256"
 	"encoding/binary"
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"math"
@@ -53,4 +55,69 @@ func UniformFloat64() (float64, error) {
 func Truncate(val float64, precision int) float64 {
 	multiplier := math.Pow(10, float64(precision))
 	return math.Floor(val*multiplier) / multiplier
+}
+
+func DeterministicRandom(seedHex string, sequenceNr int, probabilities []float64) (int, error) {
+	// Validate input
+	if len(seedHex) != 64 {
+		return 0, errors.New("seedHex must be 64 bytes")
+	} else if sequenceNr < 0 {
+		return 0, errors.New("sequenceNr must be larger than than or equal to 0")
+	} else if len(probabilities) == 0 {
+		return 0, errors.New("probabilities must not be empty")
+	}
+
+	// Decode the seed
+	seed, err := hex.DecodeString(seedHex)
+	if err != nil {
+		return 0, fmt.Errorf("invalid seed hex: %w", err)
+	} else if len(seed) != 32 {
+		return 0, errors.New("seed must decode to exactly 32 bytes")
+	}
+
+	// Validate and sum probabilities
+	sum := 0.0
+	for _, p := range probabilities {
+		if p < 0 || p > 1 {
+			return 0, fmt.Errorf("invalid probability %f", p)
+		}
+		sum += p
+	}
+
+	const epsilon = 1e-12
+	if math.Abs(sum-1.0) > epsilon {
+		return 0, fmt.Errorf("sum of probabilities = %f; must be exactly 1.0", sum)
+	}
+
+	// Build cumulative thresholds
+	thresholds := make([]uint64, len(probabilities))
+	cumulative := 0.0
+	for i, p := range probabilities {
+		cumulative += p
+		if i == len(probabilities)-1 {
+			thresholds[i] = math.MaxUint64 // ensure full coverage
+		} else {
+			thresholds[i] = uint64(cumulative * math.Pow(2, 64))
+		}
+	}
+
+	// Compute R(sequence)
+	var buf [8]byte
+	binary.BigEndian.PutUint64(buf[:], uint64(sequenceNr))
+
+	h := sha256.New()
+	h.Write(seed)
+	h.Write(buf[:])
+	hash := h.Sum(nil)
+	x := binary.BigEndian.Uint64(hash[:8])
+
+	// Find the prize index
+	for i, t := range thresholds {
+		if x < t {
+			return i, nil
+		}
+	}
+
+	// Should never happen if sum == 1.0
+	return 0, errors.New("unexpected: no prize selected despite sum == 1.0")
 }
