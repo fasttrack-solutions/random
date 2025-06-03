@@ -68,6 +68,13 @@ gosec -exclude-dir=pkg/pb ./...
   (p)robabilities - the set of probabilities to select an index from
 ```
 
+### Generating a seed
+There are several sites where a hex code can be generated.
+
+Example: https://codebeautify.org/generate-random-hexadecimal-numbers
+
+Simply set 'length of hex number' to 64 and generate one. 
+
 ### Validating deterministic results
 The results from function DeterministicRandom can be tested for consistency by using the simulator to generate results
 and then hashing the result of two runs with the same parameters.
