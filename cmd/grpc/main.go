@@ -17,6 +17,13 @@ import (
 )
 
 func main() {
+	seed := *config.SEEDHEX
+	if len(seed) != 64 {
+		panic("seed must be 64 hex characters")
+	} else if seed == "0000000000000000000000000000000000000000000000000000000000000000" {
+		panic("unique seed must set in the config")
+	}
+
 	recoveryOpts := []grpc_recovery.Option{
 		grpc_recovery.WithRecoveryHandler(func(p interface{}) (err error) {
 			slog.Error("[PANIC] recovered panic", "error", p, "stacktrace", string(debug.Stack()))
@@ -37,7 +44,7 @@ func main() {
 
 	reflection.Register(s)
 
-	randomServer := NewRandomGRPCServer(*config.SEEDHEX)
+	randomServer := NewRandomGRPCServer(seed)
 	pb.RegisterRandomServer(s, randomServer)
 
 	lis, errListen := net.Listen("tcp", fmt.Sprintf(":%v", *config.GRPCPort))

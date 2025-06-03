@@ -14,8 +14,14 @@ import (
 )
 
 func main() {
-	gin.SetMode(gin.ReleaseMode)
+	seed := *config.SEEDHEX
+	if len(seed) != 64 {
+		panic("seed must be 64 hex characters")
+	} else if seed == "0000000000000000000000000000000000000000000000000000000000000000" {
+		panic("unique seed must set in the config")
+	}
 
+	gin.SetMode(gin.ReleaseMode)
 	ginEngine := gin.New()
 	ginEngine.Use(gin.Recovery())
 
@@ -96,8 +102,6 @@ func main() {
 	})
 
 	ginEngine.GET("/getDeterministicRandom", func(c *gin.Context) {
-		seed := *config.SEEDHEX
-
 		sequence := int64(0)
 		sequenceAsStr := c.Query("s")
 		if len(sequenceAsStr) == 0 {
