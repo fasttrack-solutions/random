@@ -99,6 +99,6 @@ func (rs *RandomGRPCServer) GetDeterministicRandom(ctx context.Context, req *pb.
 	}
 
 	return &pb.GetDeterministicRandomResponse{
-		Number: int32(number),
+		Number: number,
 	}, nil
 }

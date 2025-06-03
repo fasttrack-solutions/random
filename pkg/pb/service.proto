@@ -27,10 +27,10 @@ message GetRandomInt64Response {
 }
 
 message GetDeterministicRandomRequest {
-  int32 sequence = 1;
+  int64 sequence = 1;
   repeated double probabilities = 2;
 }
 
 message GetDeterministicRandomResponse {
-  int32 number = 1;
+  int64 number = 1;
 }

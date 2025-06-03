@@ -199,7 +199,7 @@ func (x *GetRandomInt64Response) GetNumber() int64 {
 
 type GetDeterministicRandomRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Sequence      int32                  `protobuf:"varint,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	Sequence      int64                  `protobuf:"varint,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
 	Probabilities []float64              `protobuf:"fixed64,2,rep,packed,name=probabilities,proto3" json:"probabilities,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -235,7 +235,7 @@ func (*GetDeterministicRandomRequest) Descriptor() ([]byte, []int) {
 	return file_pkg_pb_service_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetDeterministicRandomRequest) GetSequence() int32 {
+func (x *GetDeterministicRandomRequest) GetSequence() int64 {
 	if x != nil {
 		return x.Sequence
 	}
@@ -251,7 +251,7 @@ func (x *GetDeterministicRandomRequest) GetProbabilities() []float64 {
 
 type GetDeterministicRandomResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Number        int32                  `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
+	Number        int64                  `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -286,7 +286,7 @@ func (*GetDeterministicRandomResponse) Descriptor() ([]byte, []int) {
 	return file_pkg_pb_service_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *GetDeterministicRandomResponse) GetNumber() int32 {
+func (x *GetDeterministicRandomResponse) GetNumber() int64 {
 	if x != nil {
 		return x.Number
 	}
@@ -307,10 +307,10 @@ const file_pkg_pb_service_proto_rawDesc = "" +
 	"\x16GetRandomInt64Response\x12\x16\n" +
 	"\x06number\x18\x01 \x01(\x03R\x06number\"a\n" +
 	"\x1dGetDeterministicRandomRequest\x12\x1a\n" +
-	"\bsequence\x18\x01 \x01(\x05R\bsequence\x12$\n" +
+	"\bsequence\x18\x01 \x01(\x03R\bsequence\x12$\n" +
 	"\rprobabilities\x18\x02 \x03(\x01R\rprobabilities\"8\n" +
 	"\x1eGetDeterministicRandomResponse\x12\x16\n" +
-	"\x06number\x18\x01 \x01(\x05R\x06number2\x99\x02\n" +
+	"\x06number\x18\x01 \x01(\x03R\x06number2\x99\x02\n" +
 	"\x06Random\x12U\n" +
 	"\x10GetRandomFloat64\x12\x1f.random.GetRandomFloat64Request\x1a .random.GetRandomFloat64Response\x12O\n" +
 	"\x0eGetRandomInt64\x12\x1d.random.GetRandomInt64Request\x1a\x1e.random.GetRandomInt64Response\x12g\n" +

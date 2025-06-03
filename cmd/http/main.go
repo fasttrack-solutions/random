@@ -98,24 +98,24 @@ func main() {
 	ginEngine.GET("/getDeterministicRandom", func(c *gin.Context) {
 		seed := *config.SEEDHEX
 
-		sequence := int32(0)
+		sequence := int64(0)
 		sequenceAsStr := c.Query("s")
 		if len(sequenceAsStr) == 0 {
 			c.String(http.StatusBadRequest, "sequence is missing")
 			c.Abort()
 			return
 		} else {
-			sequenceAsNumber, errParseInt := strconv.ParseInt(sequenceAsStr, 10, 32)
+			sequenceAsNumber, errParseInt := strconv.ParseInt(sequenceAsStr, 10, 64)
 			if errParseInt != nil {
 				c.String(http.StatusBadRequest, "unable to parse sequence as number")
 				c.Abort()
 				return
-			} else if sequenceAsNumber < 0 || sequenceAsNumber >= math.MaxInt32 {
-				c.String(http.StatusBadRequest, "sequence must be between 0 and 2,147,483,647")
+			} else if sequenceAsNumber < 0 || sequenceAsNumber >= math.MaxInt64 {
+				c.String(http.StatusBadRequest, "sequence must be between 0 and 9,223,372,036,854,775,806")
 				c.Abort()
 				return
 			} else {
-				sequence = int32(sequenceAsNumber)
+				sequence = sequenceAsNumber
 			}
 		}
 

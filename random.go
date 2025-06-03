@@ -59,7 +59,7 @@ func Truncate(val float64, precision int) float64 {
 
 // DeterministicRandom creates deterministic random numbers using a seed.
 // The same seed, sequence number and probabilities generate the same outcome.
-func DeterministicRandom(seedHex string, sequence int32, probabilities []float64) (int32, error) {
+func DeterministicRandom(seedHex string, sequence int64, probabilities []float64) (int64, error) {
 	// Validate input
 	if len(seedHex) != 64 {
 		return 0, errors.New("seedHex must be 64 bytes")
@@ -116,10 +116,10 @@ func DeterministicRandom(seedHex string, sequence int32, probabilities []float64
 	// Find the selected index
 	for i, t := range thresholds {
 		if x < t {
-			if i < math.MinInt32 || i > math.MaxInt32 {
+			if i < math.MinInt64 || i > math.MaxInt64 {
 				return 0, fmt.Errorf("threshold index out of range for Int32")
 			}
-			return int32(i), nil
+			return int64(i), nil
 		}
 	}
 
