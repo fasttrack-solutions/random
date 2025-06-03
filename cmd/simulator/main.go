@@ -17,6 +17,7 @@ func main() {
 
 	menu.AddItem("Random Uniform Float64 with range (0,1]", "UniformFloat64")
 	menu.AddItem("Random Uniform Int with range (min, max)", "UniformInt64")
+	menu.AddItem("Deterministic Random with seed and probabilities", "DeterministicRandom")
 	menu.AddItem("Exit", "Exit")
 
 	choice := menu.Display()
@@ -33,24 +34,26 @@ func main() {
 			res, errPrompt := stringPrompt("how many results do you want to generate?")
 			if errPrompt != nil {
 				fmt.Println("error getting results from prompt:", errPrompt)
-			} else {
-				numbersToGenerate, errParseInt := strconv.ParseInt(res, 10, 32)
-				if errParseInt != nil {
-					fmt.Println(res, "is an invalid number, try again")
-				} else {
-					fmt.Print("generating ", res, " random numbers... ")
-
-					fileName, errGenerate := generateUniformFloat64(int32(numbersToGenerate))
-					if errGenerate != nil {
-						fmt.Print("error: ", errGenerate)
-						return
-					}
-
-					fmt.Println("file with results was generated:", fileName)
-
-					break
-				}
+				continue
 			}
+
+			numbersToGenerate, errParseInt := strconv.Atoi(res)
+			if errParseInt != nil {
+				fmt.Println(res, "is an invalid number, try again")
+				continue
+			}
+
+			fmt.Print("generating ", res, " random numbers... ")
+
+			fileName, errGenerate := generateUniformFloat64(numbersToGenerate)
+			if errGenerate != nil {
+				fmt.Print("error: ", errGenerate)
+				return
+			}
+
+			fmt.Println("file with results was generated:", fileName)
+
+			break
 		}
 
 	case "UniformInt64":
@@ -58,47 +61,113 @@ func main() {
 			res, errPrompt := stringPrompt("how many results do you want to generate?")
 			if errPrompt != nil {
 				fmt.Println("error getting results from prompt:", errPrompt)
-			} else {
-				numbersToGenerate, errParseIntCount := strconv.ParseInt(res, 10, 32)
-				if errParseIntCount != nil {
-					fmt.Println(res, "is an invalid number, try again")
-				} else {
-					res, errPrompt = stringPrompt("whats the minimum number?")
-					if errPrompt != nil {
-						fmt.Println("error getting results from prompt:", errPrompt)
-					} else {
-						minimumNumber, errParseIntMin := strconv.ParseInt(res, 10, 32)
-						if errParseIntMin != nil {
-							fmt.Println(res, "is an invalid number, try again")
-						} else {
-							res, errPrompt = stringPrompt("whats the maximum number?")
-							if errPrompt != nil {
-								fmt.Println("error getting results from prompt:", errPrompt)
-							} else {
-								maximumNumber, errParseIntMax := strconv.ParseInt(res, 10, 32)
-								if errParseIntMax != nil {
-									fmt.Println(res, "is an invalid number, try again")
-								} else if maximumNumber <= minimumNumber {
-									fmt.Println("maximum cannot be less than or equal to minimum number, try again")
-								} else {
+				continue
+			}
 
-									fmt.Print("generating ", numbersToGenerate, " random numbers between ", minimumNumber, " and ", maximumNumber, "... ")
+			numbersToGenerate, errParseIntCount := strconv.Atoi(res)
+			if errParseIntCount != nil {
+				fmt.Println(res, "is an invalid number, try again")
+				continue
+			}
 
-									fileName, errGenerate := generateUniformInt64(int32(numbersToGenerate), int32(minimumNumber), int32(maximumNumber))
-									if errGenerate != nil {
-										fmt.Print("error: ", errGenerate)
-										return
-									}
+			res, errPrompt = stringPrompt("whats the minimum number?")
+			if errPrompt != nil {
+				fmt.Println("error getting results from prompt:", errPrompt)
+				continue
+			}
 
-									fmt.Println("file with results was generated:", fileName)
+			minimumNumber, errParseIntMin := strconv.ParseInt(res, 10, 32)
+			if errParseIntMin != nil {
+				fmt.Println(res, "is an invalid number, try again")
+				continue
+			}
 
-									break
-								}
-							}
-						}
-					}
+			res, errPrompt = stringPrompt("whats the maximum number?")
+			if errPrompt != nil {
+				fmt.Println("error getting results from prompt:", errPrompt)
+				continue
+			}
+
+			maximumNumber, errParseIntMax := strconv.ParseInt(res, 10, 32)
+			if errParseIntMax != nil {
+				fmt.Println(res, "is an invalid number, try again")
+				continue
+			} else if maximumNumber <= minimumNumber {
+				fmt.Println("maximum cannot be less than or equal to minimum number, try again")
+				continue
+			}
+
+			fmt.Print("generating ", numbersToGenerate, " random numbers between ", minimumNumber, " and ", maximumNumber, "... ")
+
+			fileName, errGenerate := generateUniformInt64(numbersToGenerate, int32(minimumNumber), int32(maximumNumber))
+			if errGenerate != nil {
+				fmt.Print("error: ", errGenerate)
+				return
+			}
+
+			fmt.Println("file with results was generated:", fileName)
+
+			break
+		}
+
+	case "DeterministicRandom":
+		for {
+			res, errPrompt := stringPrompt("how many results do you want to generate?")
+			if errPrompt != nil {
+				fmt.Println("error getting results from prompt:", errPrompt)
+				continue
+			}
+
+			numbersToGenerate, errParseIntCount := strconv.ParseInt(res, 10, 64)
+			if errParseIntCount != nil {
+				fmt.Println(res, "is an invalid number, try again")
+				continue
+			}
+
+			res, errPrompt = stringPrompt("what seed should be used (i.e. 9912f3bcf715a55ae5c9d47f9f6562599912f3bcf715a55ae5c9d47f9f656259)?")
+			if errPrompt != nil {
+				fmt.Println("error getting results from prompt:", errPrompt)
+				continue
+			}
+
+			seedHex := res
+			if len(seedHex) != 64 {
+				fmt.Println("the seed needs to be 64 characters [a-f0-9], try again")
+				continue
+			}
+
+			res, errPrompt = stringPrompt("what probabilities should be used (i.e. 0.3, 0.5, 0.2)?")
+			if errPrompt != nil {
+				fmt.Println("error getting results from prompt:", errPrompt)
+				continue
+			}
+
+			probabilitiesAsStrings := strings.Split(res, ",")
+			if len(probabilitiesAsStrings) == 0 {
+				fmt.Println("no probabilities set, try again")
+				continue
+			}
+
+			probabilities := make([]float64, len(probabilitiesAsStrings))
+			for i, v := range probabilitiesAsStrings {
+				probabilities[i], err = strconv.ParseFloat(strings.TrimSpace(v), 64)
+				if err != nil {
+					fmt.Println("invalid probability, try again:", err)
+					continue
 				}
 			}
+
+			fmt.Print("generating ", numbersToGenerate, " random numbers... ")
+
+			fileName, errGenerate := generateDeterministicRandom(numbersToGenerate, seedHex, probabilities)
+			if errGenerate != nil {
+				fmt.Print("error: ", errGenerate)
+				return
+			}
+
+			fmt.Println("file with results was generated:", fileName)
+
+			break
 		}
 
 	case "Exit":
@@ -127,7 +196,7 @@ func stringPrompt(label string) (string, error) {
 	return strings.TrimSpace(s), nil
 }
 
-func generateUniformFloat64(numbersToGenerate int32) (string, error) {
+func generateUniformFloat64(numbersToGenerate int) (string, error) {
 	fileName := fmt.Sprintf("cmd/simulator/results/UniformFloat64-%v.csv", time.Now().UnixMilli())
 
 	f, err := os.Create(filepath.Clean(fileName))
@@ -142,7 +211,7 @@ func generateUniformFloat64(numbersToGenerate int32) (string, error) {
 		return "", errWriteString
 	}
 
-	for i := int32(0); i < numbersToGenerate; i++ {
+	for i := 0; i < numbersToGenerate; i++ {
 		rnd, errRnr := random.UniformFloat64()
 		if errRnr != nil {
 			return "", errRnr
@@ -157,7 +226,7 @@ func generateUniformFloat64(numbersToGenerate int32) (string, error) {
 	return fileName, nil
 }
 
-func generateUniformInt64(numbersToGenerate int32, min int32, max int32) (string, error) {
+func generateUniformInt64(numbersToGenerate int, min int32, max int32) (string, error) {
 	fileName := fmt.Sprintf("cmd/simulator/results/UniformInt64-%v.csv", time.Now().UnixMilli())
 
 	f, err := os.Create(filepath.Clean(fileName))
@@ -172,13 +241,48 @@ func generateUniformInt64(numbersToGenerate int32, min int32, max int32) (string
 		return "", errWriteString
 	}
 
-	for i := int32(0); i < numbersToGenerate; i++ {
+	for i := 0; i < numbersToGenerate; i++ {
 		rnd, errRnr := random.UniformInt64(min, max)
 		if errRnr != nil {
 			return "", errRnr
 		}
 
 		_, errWriteString = f.WriteString(fmt.Sprintf("%v\n", rnd))
+		if errWriteString != nil {
+			return "", errWriteString
+		}
+	}
+
+	return fileName, nil
+}
+
+func generateDeterministicRandom(numbersToGenerate int64, seed string, probabilities []float64) (string, error) {
+	fileName := fmt.Sprintf("cmd/simulator/results/DeterministicRandom-%v.csv", time.Now().UnixMilli())
+
+	f, err := os.Create(filepath.Clean(fileName))
+	if err != nil {
+		return "", err
+	}
+
+	defer f.Close()
+
+	_, errWriteString := f.WriteString(fmt.Sprintf("DeterministicRandom (%v %v)\n", seed, probabilities))
+	if errWriteString != nil {
+		return "", errWriteString
+	}
+
+	_, errWriteString = f.WriteString(fmt.Sprintf("SequenceNr, SelectedIndex\n"))
+	if errWriteString != nil {
+		return "", errWriteString
+	}
+
+	for i := int64(0); i < numbersToGenerate; i++ {
+		rnd, errRnr := random.DeterministicRandom(seed, i, probabilities)
+		if errRnr != nil {
+			return "", errRnr
+		}
+
+		_, errWriteString = f.WriteString(fmt.Sprintf("%v, %v\n", i, rnd))
 		if errWriteString != nil {
 			return "", errWriteString
 		}

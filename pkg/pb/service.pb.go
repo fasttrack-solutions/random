@@ -197,6 +197,102 @@ func (x *GetRandomInt64Response) GetNumber() int64 {
 	return 0
 }
 
+type GetDeterministicRandomRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Sequence      int64                  `protobuf:"varint,1,opt,name=sequence,proto3" json:"sequence,omitempty"`
+	Probabilities []float64              `protobuf:"fixed64,2,rep,packed,name=probabilities,proto3" json:"probabilities,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDeterministicRandomRequest) Reset() {
+	*x = GetDeterministicRandomRequest{}
+	mi := &file_pkg_pb_service_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDeterministicRandomRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDeterministicRandomRequest) ProtoMessage() {}
+
+func (x *GetDeterministicRandomRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_pb_service_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDeterministicRandomRequest.ProtoReflect.Descriptor instead.
+func (*GetDeterministicRandomRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_pb_service_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *GetDeterministicRandomRequest) GetSequence() int64 {
+	if x != nil {
+		return x.Sequence
+	}
+	return 0
+}
+
+func (x *GetDeterministicRandomRequest) GetProbabilities() []float64 {
+	if x != nil {
+		return x.Probabilities
+	}
+	return nil
+}
+
+type GetDeterministicRandomResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Number        int64                  `protobuf:"varint,1,opt,name=number,proto3" json:"number,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDeterministicRandomResponse) Reset() {
+	*x = GetDeterministicRandomResponse{}
+	mi := &file_pkg_pb_service_proto_msgTypes[5]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDeterministicRandomResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDeterministicRandomResponse) ProtoMessage() {}
+
+func (x *GetDeterministicRandomResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_pb_service_proto_msgTypes[5]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDeterministicRandomResponse.ProtoReflect.Descriptor instead.
+func (*GetDeterministicRandomResponse) Descriptor() ([]byte, []int) {
+	return file_pkg_pb_service_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *GetDeterministicRandomResponse) GetNumber() int64 {
+	if x != nil {
+		return x.Number
+	}
+	return 0
+}
+
 var File_pkg_pb_service_proto protoreflect.FileDescriptor
 
 const file_pkg_pb_service_proto_rawDesc = "" +
@@ -209,10 +305,16 @@ const file_pkg_pb_service_proto_rawDesc = "" +
 	"\x03min\x18\x01 \x01(\x05R\x03min\x12\x10\n" +
 	"\x03max\x18\x02 \x01(\x05R\x03max\"0\n" +
 	"\x16GetRandomInt64Response\x12\x16\n" +
-	"\x06number\x18\x01 \x01(\x03R\x06number2\xb0\x01\n" +
+	"\x06number\x18\x01 \x01(\x03R\x06number\"a\n" +
+	"\x1dGetDeterministicRandomRequest\x12\x1a\n" +
+	"\bsequence\x18\x01 \x01(\x03R\bsequence\x12$\n" +
+	"\rprobabilities\x18\x02 \x03(\x01R\rprobabilities\"8\n" +
+	"\x1eGetDeterministicRandomResponse\x12\x16\n" +
+	"\x06number\x18\x01 \x01(\x03R\x06number2\x99\x02\n" +
 	"\x06Random\x12U\n" +
 	"\x10GetRandomFloat64\x12\x1f.random.GetRandomFloat64Request\x1a .random.GetRandomFloat64Response\x12O\n" +
-	"\x0eGetRandomInt64\x12\x1d.random.GetRandomInt64Request\x1a\x1e.random.GetRandomInt64ResponseB\x80\x01\n" +
+	"\x0eGetRandomInt64\x12\x1d.random.GetRandomInt64Request\x1a\x1e.random.GetRandomInt64Response\x12g\n" +
+	"\x16GetDeterministicRandom\x12%.random.GetDeterministicRandomRequest\x1a&.random.GetDeterministicRandomResponseB\x80\x01\n" +
 	"\n" +
 	"com.randomB\fServiceProtoP\x01Z,github.com/fasttrack-solutions/random/pkg/pb\xa2\x02\x03RXX\xaa\x02\x06Random\xca\x02\x06Random\xe2\x02\x12Random\\GPBMetadata\xea\x02\x06Randomb\x06proto3"
 
@@ -228,20 +330,24 @@ func file_pkg_pb_service_proto_rawDescGZIP() []byte {
 	return file_pkg_pb_service_proto_rawDescData
 }
 
-var file_pkg_pb_service_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
+var file_pkg_pb_service_proto_msgTypes = make([]protoimpl.MessageInfo, 6)
 var file_pkg_pb_service_proto_goTypes = []any{
-	(*GetRandomFloat64Request)(nil),  // 0: random.GetRandomFloat64Request
-	(*GetRandomFloat64Response)(nil), // 1: random.GetRandomFloat64Response
-	(*GetRandomInt64Request)(nil),    // 2: random.GetRandomInt64Request
-	(*GetRandomInt64Response)(nil),   // 3: random.GetRandomInt64Response
+	(*GetRandomFloat64Request)(nil),        // 0: random.GetRandomFloat64Request
+	(*GetRandomFloat64Response)(nil),       // 1: random.GetRandomFloat64Response
+	(*GetRandomInt64Request)(nil),          // 2: random.GetRandomInt64Request
+	(*GetRandomInt64Response)(nil),         // 3: random.GetRandomInt64Response
+	(*GetDeterministicRandomRequest)(nil),  // 4: random.GetDeterministicRandomRequest
+	(*GetDeterministicRandomResponse)(nil), // 5: random.GetDeterministicRandomResponse
 }
 var file_pkg_pb_service_proto_depIdxs = []int32{
 	0, // 0: random.Random.GetRandomFloat64:input_type -> random.GetRandomFloat64Request
 	2, // 1: random.Random.GetRandomInt64:input_type -> random.GetRandomInt64Request
-	1, // 2: random.Random.GetRandomFloat64:output_type -> random.GetRandomFloat64Response
-	3, // 3: random.Random.GetRandomInt64:output_type -> random.GetRandomInt64Response
-	2, // [2:4] is the sub-list for method output_type
-	0, // [0:2] is the sub-list for method input_type
+	4, // 2: random.Random.GetDeterministicRandom:input_type -> random.GetDeterministicRandomRequest
+	1, // 3: random.Random.GetRandomFloat64:output_type -> random.GetRandomFloat64Response
+	3, // 4: random.Random.GetRandomInt64:output_type -> random.GetRandomInt64Response
+	5, // 5: random.Random.GetDeterministicRandom:output_type -> random.GetDeterministicRandomResponse
+	3, // [3:6] is the sub-list for method output_type
+	0, // [0:3] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
 	0, // [0:0] is the sub-list for extension extendee
 	0, // [0:0] is the sub-list for field type_name
@@ -258,7 +364,7 @@ func file_pkg_pb_service_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_pkg_pb_service_proto_rawDesc), len(file_pkg_pb_service_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   6,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

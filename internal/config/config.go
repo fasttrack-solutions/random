@@ -8,6 +8,7 @@ import (
 var (
 	GRPCPort = flag.Int("grpc-port", 3401, "Port for gRPC server")
 	HTTPPort = flag.Int("http-port", 3402, "Port for HTTP server")
+	SEEDHEX  = flag.String("seed-hex", "0000000000000000000000000000000000000000000000000000000000000000", "Seed for the deterministic random number")
 )
 
 func init() {
