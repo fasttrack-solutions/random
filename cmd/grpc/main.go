@@ -37,7 +37,7 @@ func main() {
 
 	reflection.Register(s)
 
-	randomServer := NewRandomGRPCServer()
+	randomServer := NewRandomGRPCServer(*config.SEEDHEX)
 	pb.RegisterRandomServer(s, randomServer)
 
 	lis, errListen := net.Listen("tcp", fmt.Sprintf(":%v", *config.GRPCPort))
@@ -57,10 +57,13 @@ func main() {
 
 type RandomGRPCServer struct {
 	pb.UnimplementedRandomServer
+	seed string
 }
 
-func NewRandomGRPCServer() *RandomGRPCServer {
-	return &RandomGRPCServer{}
+func NewRandomGRPCServer(seed string) *RandomGRPCServer {
+	return &RandomGRPCServer{
+		seed: seed,
+	}
 }
 
 func (rs *RandomGRPCServer) GetRandomInt64(ctx context.Context, req *pb.GetRandomInt64Request) (*pb.GetRandomInt64Response, error) {
@@ -86,5 +89,16 @@ func (rs *RandomGRPCServer) GetRandomFloat64(ctx context.Context, req *pb.GetRan
 
 	return &pb.GetRandomFloat64Response{
 		Number: number,
+	}, nil
+}
+
+func (rs *RandomGRPCServer) GetDeterministicRandom(ctx context.Context, req *pb.GetDeterministicRandomRequest) (*pb.GetDeterministicRandomResponse, error) {
+	number, err := random.DeterministicRandom(rs.seed, int(req.Sequence), req.Probabilities)
+	if err != nil {
+		return nil, err
+	}
+
+	return &pb.GetDeterministicRandomResponse{
+		Number: int32(number),
 	}, nil
 }

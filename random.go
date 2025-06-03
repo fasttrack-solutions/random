@@ -57,12 +57,14 @@ func Truncate(val float64, precision int) float64 {
 	return math.Floor(val*multiplier) / multiplier
 }
 
-func DeterministicRandom(seedHex string, sequenceNr int, probabilities []float64) (int, error) {
+// DeterministicRandom creates deterministic random numbers using a seed.
+// The same seed, sequence number and probabilities generate the same outcome.
+func DeterministicRandom(seedHex string, sequence int, probabilities []float64) (int, error) {
 	// Validate input
 	if len(seedHex) != 64 {
 		return 0, errors.New("seedHex must be 64 bytes")
-	} else if sequenceNr < 0 {
-		return 0, errors.New("sequenceNr must be larger than than or equal to 0")
+	} else if sequence < 0 {
+		return 0, errors.New("sequence must be larger than than or equal to 0")
 	} else if len(probabilities) == 0 {
 		return 0, errors.New("probabilities must not be empty")
 	}
@@ -79,14 +81,14 @@ func DeterministicRandom(seedHex string, sequenceNr int, probabilities []float64
 	sum := 0.0
 	for _, p := range probabilities {
 		if p < 0 || p > 1 {
-			return 0, fmt.Errorf("invalid probability %f", p)
+			return 0, fmt.Errorf("invalid input %v; valid range 0 <= p <= 1", p)
 		}
 		sum += p
 	}
 
-	const epsilon = 1e-12
+	const epsilon = 1e-12 // allow for minor float faults
 	if math.Abs(sum-1.0) > epsilon {
-		return 0, fmt.Errorf("sum of probabilities = %f; must be exactly 1.0", sum)
+		return 0, fmt.Errorf("sum of probabilities %v; must be exactly 1.0", sum)
 	}
 
 	// Build cumulative thresholds
@@ -101,9 +103,9 @@ func DeterministicRandom(seedHex string, sequenceNr int, probabilities []float64
 		}
 	}
 
-	// Compute R(sequence)
+	// Compute random number
 	var buf [8]byte
-	binary.BigEndian.PutUint64(buf[:], uint64(sequenceNr))
+	binary.BigEndian.PutUint64(buf[:], uint64(sequence))
 
 	h := sha256.New()
 	h.Write(seed)
@@ -111,7 +113,7 @@ func DeterministicRandom(seedHex string, sequenceNr int, probabilities []float64
 	hash := h.Sum(nil)
 	x := binary.BigEndian.Uint64(hash[:8])
 
-	// Find the prize index
+	// Find the selected index
 	for i, t := range thresholds {
 		if x < t {
 			return i, nil

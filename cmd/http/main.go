@@ -9,6 +9,7 @@ import (
 	"math"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -88,6 +89,68 @@ func main() {
 		number, errUniformInt64 := random.UniformInt64(minimum, maximum)
 		if errUniformInt64 != nil {
 			c.String(http.StatusBadRequest, errUniformInt64.Error())
+			c.Abort()
+			return
+		}
+		c.String(http.StatusOK, fmt.Sprintf("%v", number))
+	})
+
+	ginEngine.GET("/getDeterministicRandom", func(c *gin.Context) {
+		seed := *config.SEEDHEX
+
+		sequence := 0
+		sequenceAsStr := c.Query("s")
+		if len(sequenceAsStr) == 0 {
+			c.String(http.StatusBadRequest, "sequence is missing")
+			c.Abort()
+			return
+		} else {
+			sequenceAsNumber, errAtoi := strconv.Atoi(sequenceAsStr)
+			if errAtoi != nil {
+				c.String(http.StatusBadRequest, "unable to parse sequence as number")
+				c.Abort()
+				return
+			} else if sequenceAsNumber < 0 || sequenceAsNumber >= math.MaxInt32 {
+				c.String(http.StatusBadRequest, "sequence must be between 0 and 2,147,483,647")
+				c.Abort()
+				return
+			} else {
+				sequence = sequenceAsNumber
+			}
+		}
+
+		var probabilities []float64
+		probabilitiesAsStr := c.Query("p")
+		if len(probabilitiesAsStr) == 0 {
+			c.String(http.StatusBadRequest, "probabilities are missing")
+			c.Abort()
+			return
+		} else if len(probabilitiesAsStr) > 300 {
+			c.String(http.StatusBadRequest, "string of probabilities must be less than 300 characters")
+			c.Abort()
+			return
+		} else {
+			probabilitiesAsStrList := strings.Split(probabilitiesAsStr, ",")
+			if len(probabilitiesAsStrList) == 0 {
+				c.String(http.StatusBadRequest, "invalid probabilities, use comma separated list (i.e. 0.01,0.09,0.9")
+				c.Abort()
+				return
+			}
+
+			for _, v := range probabilitiesAsStrList {
+				probability, errParse := strconv.ParseFloat(strings.TrimSpace(v), 64)
+				if errParse != nil {
+					c.String(http.StatusBadRequest, fmt.Sprintf("invalid probability: %s", strings.TrimSpace(v)))
+					c.Abort()
+					return
+				}
+				probabilities = append(probabilities, probability)
+			}
+		}
+
+		number, errDeterministicRandom := random.DeterministicRandom(seed, sequence, probabilities)
+		if errDeterministicRandom != nil {
+			c.String(http.StatusBadRequest, errDeterministicRandom.Error())
 			c.Abort()
 			return
 		}
