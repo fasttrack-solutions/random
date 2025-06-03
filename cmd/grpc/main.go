@@ -21,7 +21,7 @@ func main() {
 	if len(seed) != 64 {
 		panic("seed must be 64 hex characters")
 	} else if seed == "0000000000000000000000000000000000000000000000000000000000000000" {
-		panic("unique seed must set in the config")
+		panic("a unique seed value is required")
 	}
 
 	recoveryOpts := []grpc_recovery.Option{

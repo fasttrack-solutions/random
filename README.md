@@ -41,10 +41,10 @@ gosec -exclude-dir=pkg/pb ./...
 
 ### Run
 ```bash
- docker run -p 8080:3401 fasttrack/random grpc
+ docker run -p 8080:3401 -e SEED_HEX=0000000000000000000000000000000000000000000000000000000000000000 fasttrack/random grpc
 ```
 ```bash
- docker run -p 8081:3402 fasttrack/random http
+ docker run -p 8081:3402 -e SEED_HEX=0000000000000000000000000000000000000000000000000000000000000000 fasttrack/random http
 ```
 
 ## Other
