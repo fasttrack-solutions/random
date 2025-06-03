@@ -98,15 +98,15 @@ func main() {
 	ginEngine.GET("/getDeterministicRandom", func(c *gin.Context) {
 		seed := *config.SEEDHEX
 
-		sequence := 0
+		sequence := int32(0)
 		sequenceAsStr := c.Query("s")
 		if len(sequenceAsStr) == 0 {
 			c.String(http.StatusBadRequest, "sequence is missing")
 			c.Abort()
 			return
 		} else {
-			sequenceAsNumber, errAtoi := strconv.Atoi(sequenceAsStr)
-			if errAtoi != nil {
+			sequenceAsNumber, errParseInt := strconv.ParseInt(sequenceAsStr, 10, 32)
+			if errParseInt != nil {
 				c.String(http.StatusBadRequest, "unable to parse sequence as number")
 				c.Abort()
 				return
@@ -115,7 +115,7 @@ func main() {
 				c.Abort()
 				return
 			} else {
-				sequence = sequenceAsNumber
+				sequence = int32(sequenceAsNumber)
 			}
 		}
 

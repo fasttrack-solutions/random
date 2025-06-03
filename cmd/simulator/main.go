@@ -118,7 +118,7 @@ func main() {
 				continue
 			}
 
-			numbersToGenerate, errParseIntCount := strconv.Atoi(res)
+			numbersToGenerate, errParseIntCount := strconv.ParseInt(res, 10, 32)
 			if errParseIntCount != nil {
 				fmt.Println(res, "is an invalid number, try again")
 				continue
@@ -159,7 +159,7 @@ func main() {
 
 			fmt.Print("generating ", numbersToGenerate, " random numbers... ")
 
-			fileName, errGenerate := generateDeterministicRandom(numbersToGenerate, seedHex, probabilities)
+			fileName, errGenerate := generateDeterministicRandom(int32(numbersToGenerate), seedHex, probabilities)
 			if errGenerate != nil {
 				fmt.Print("error: ", errGenerate)
 				return
@@ -256,7 +256,7 @@ func generateUniformInt64(numbersToGenerate int, min int32, max int32) (string, 
 	return fileName, nil
 }
 
-func generateDeterministicRandom(numbersToGenerate int, seed string, probabilities []float64) (string, error) {
+func generateDeterministicRandom(numbersToGenerate int32, seed string, probabilities []float64) (string, error) {
 	fileName := fmt.Sprintf("cmd/simulator/results/DeterministicRandom-%v.csv", time.Now().UnixMilli())
 
 	f, err := os.Create(filepath.Clean(fileName))
@@ -276,7 +276,7 @@ func generateDeterministicRandom(numbersToGenerate int, seed string, probabiliti
 		return "", errWriteString
 	}
 
-	for i := 0; i < numbersToGenerate; i++ {
+	for i := int32(0); i < numbersToGenerate; i++ {
 		rnd, errRnr := random.DeterministicRandom(seed, i, probabilities)
 		if errRnr != nil {
 			return "", errRnr

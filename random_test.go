@@ -63,9 +63,9 @@ func Test_Truncate(t *testing.T) {
 func Test_DeterministicRandom(t *testing.T) {
 	testCases := []struct {
 		seedHex       string
-		sequence      int
+		sequence      int32
 		probabilities []float64
-		expectedIndex int
+		expectedIndex int32
 	}{
 		{
 			seedHex:       "9912f3bcf715a55ae5c9d47f9f6562599912f3bcf715a55ae5c9d47f9f656259",

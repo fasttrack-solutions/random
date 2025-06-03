@@ -93,7 +93,7 @@ func (rs *RandomGRPCServer) GetRandomFloat64(ctx context.Context, req *pb.GetRan
 }
 
 func (rs *RandomGRPCServer) GetDeterministicRandom(ctx context.Context, req *pb.GetDeterministicRandomRequest) (*pb.GetDeterministicRandomResponse, error) {
-	number, err := random.DeterministicRandom(rs.seed, int(req.Sequence), req.Probabilities)
+	number, err := random.DeterministicRandom(rs.seed, req.Sequence, req.Probabilities)
 	if err != nil {
 		return nil, err
 	}

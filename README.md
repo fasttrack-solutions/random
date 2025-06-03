@@ -46,3 +46,12 @@ gosec -exclude-dir=pkg/pb ./...
 ```bash
  docker run -p 8081:3402 fasttrack/random http
 ```
+
+## Other
+
+### Ensuring deterministic results
+The results from function DeterministicRandom can be tested for consistency by using the simulator to generate results
+and then hashing the result of two runs with the same parameters.
+```bash
+ shasum -a 256 cmd/simulator/results/DeterministicRandom-X.csv
+```
