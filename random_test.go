@@ -59,3 +59,50 @@ func Test_Truncate(t *testing.T) {
 	number = Truncate(0.1234567891, 9)
 	assert.Equal(t, 0.123456789, number)
 }
+
+func Test_DeterministicRandom(t *testing.T) {
+	testCases := []struct {
+		seedHex       string
+		sequence      int64
+		probabilities []float64
+		expectedIndex int64
+	}{
+		{
+			seedHex:       "9912f3bcf715a55ae5c9d47f9f6562599912f3bcf715a55ae5c9d47f9f656259",
+			sequence:      0,
+			probabilities: []float64{0.2, 0.2, 0.2, 0.2, 0.2},
+			expectedIndex: 0,
+		},
+		{
+			seedHex:       "9912f3bcf715a55ae5c9d47f9f6562599912f3bcf715a55ae5c9d47f9f656259",
+			sequence:      1,
+			probabilities: []float64{0.2, 0.2, 0.2, 0.2, 0.2},
+			expectedIndex: 2,
+		},
+		{
+			seedHex:       "9912f3bcf715a55ae5c9d47f9f6562599912f3bcf715a55ae5c9d47f9f656259",
+			sequence:      2,
+			probabilities: []float64{0.2, 0.2, 0.2, 0.2, 0.2},
+			expectedIndex: 1,
+		},
+		{
+			seedHex:       "0000000000000000000000000000000000000000000000000000000000000000",
+			sequence:      0,
+			probabilities: []float64{0.1, 0.9},
+			expectedIndex: 1,
+		},
+
+		{
+			seedHex:       "9912f3bcf715a55ae5c9d47f9f6562599912f3bcf715a55ae5c9d47f9f656259",
+			sequence:      9,
+			probabilities: []float64{0.3, 0.5, 0.2},
+			expectedIndex: 2,
+		},
+	}
+
+	for _, testCase := range testCases {
+		selectedIndex, err := DeterministicRandom(testCase.seedHex, testCase.sequence, testCase.probabilities)
+		assert.Nil(t, err)
+		assert.Equal(t, testCase.expectedIndex, selectedIndex)
+	}
+}

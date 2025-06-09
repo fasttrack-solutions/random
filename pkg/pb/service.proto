@@ -8,6 +8,7 @@ option go_package = "github.com/fasttrack-solutions/random/pkg/pb";
 service Random {
   rpc GetRandomFloat64(GetRandomFloat64Request) returns (GetRandomFloat64Response);
   rpc GetRandomInt64(GetRandomInt64Request) returns (GetRandomInt64Response);
+  rpc GetDeterministicRandom(GetDeterministicRandomRequest) returns (GetDeterministicRandomResponse);
 }
 
 message GetRandomFloat64Request {}
@@ -22,5 +23,14 @@ message GetRandomInt64Request {
 }
 
 message GetRandomInt64Response {
+  int64 number = 1;
+}
+
+message GetDeterministicRandomRequest {
+  int64 sequence = 1;
+  repeated double probabilities = 2;
+}
+
+message GetDeterministicRandomResponse {
   int64 number = 1;
 }

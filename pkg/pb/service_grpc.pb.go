@@ -19,8 +19,9 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Random_GetRandomFloat64_FullMethodName = "/random.Random/GetRandomFloat64"
-	Random_GetRandomInt64_FullMethodName   = "/random.Random/GetRandomInt64"
+	Random_GetRandomFloat64_FullMethodName       = "/random.Random/GetRandomFloat64"
+	Random_GetRandomInt64_FullMethodName         = "/random.Random/GetRandomInt64"
+	Random_GetDeterministicRandom_FullMethodName = "/random.Random/GetDeterministicRandom"
 )
 
 // RandomClient is the client API for Random service.
@@ -29,6 +30,7 @@ const (
 type RandomClient interface {
 	GetRandomFloat64(ctx context.Context, in *GetRandomFloat64Request, opts ...grpc.CallOption) (*GetRandomFloat64Response, error)
 	GetRandomInt64(ctx context.Context, in *GetRandomInt64Request, opts ...grpc.CallOption) (*GetRandomInt64Response, error)
+	GetDeterministicRandom(ctx context.Context, in *GetDeterministicRandomRequest, opts ...grpc.CallOption) (*GetDeterministicRandomResponse, error)
 }
 
 type randomClient struct {
@@ -59,12 +61,23 @@ func (c *randomClient) GetRandomInt64(ctx context.Context, in *GetRandomInt64Req
 	return out, nil
 }
 
+func (c *randomClient) GetDeterministicRandom(ctx context.Context, in *GetDeterministicRandomRequest, opts ...grpc.CallOption) (*GetDeterministicRandomResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetDeterministicRandomResponse)
+	err := c.cc.Invoke(ctx, Random_GetDeterministicRandom_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RandomServer is the server API for Random service.
 // All implementations should embed UnimplementedRandomServer
 // for forward compatibility.
 type RandomServer interface {
 	GetRandomFloat64(context.Context, *GetRandomFloat64Request) (*GetRandomFloat64Response, error)
 	GetRandomInt64(context.Context, *GetRandomInt64Request) (*GetRandomInt64Response, error)
+	GetDeterministicRandom(context.Context, *GetDeterministicRandomRequest) (*GetDeterministicRandomResponse, error)
 }
 
 // UnimplementedRandomServer should be embedded to have
@@ -79,6 +92,9 @@ func (UnimplementedRandomServer) GetRandomFloat64(context.Context, *GetRandomFlo
 }
 func (UnimplementedRandomServer) GetRandomInt64(context.Context, *GetRandomInt64Request) (*GetRandomInt64Response, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetRandomInt64 not implemented")
+}
+func (UnimplementedRandomServer) GetDeterministicRandom(context.Context, *GetDeterministicRandomRequest) (*GetDeterministicRandomResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDeterministicRandom not implemented")
 }
 func (UnimplementedRandomServer) testEmbeddedByValue() {}
 
@@ -136,6 +152,24 @@ func _Random_GetRandomInt64_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Random_GetDeterministicRandom_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetDeterministicRandomRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RandomServer).GetDeterministicRandom(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Random_GetDeterministicRandom_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RandomServer).GetDeterministicRandom(ctx, req.(*GetDeterministicRandomRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Random_ServiceDesc is the grpc.ServiceDesc for Random service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -150,6 +184,10 @@ var Random_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetRandomInt64",
 			Handler:    _Random_GetRandomInt64_Handler,
+		},
+		{
+			MethodName: "GetDeterministicRandom",
+			Handler:    _Random_GetDeterministicRandom_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
