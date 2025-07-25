@@ -47,14 +47,7 @@ func UniformFloat64() (float64, error) {
 	}
 	r := float64(binary.LittleEndian.Uint64(b[:])) / (1 << 64)
 
-	return Truncate(r, 9), nil
-}
-
-// Truncate chops off decimals after precision.
-// i.e. Truncate(1.2345678, 5) returns 1.23456 instead of a rounded 1.23457
-func Truncate(val float64, precision int) float64 {
-	multiplier := math.Pow(10, float64(precision))
-	return math.Floor(val*multiplier) / multiplier
+	return r, nil
 }
 
 // DeterministicRandom creates deterministic random numbers using a seed.

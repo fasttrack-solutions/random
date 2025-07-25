@@ -43,23 +43,6 @@ func Test_UniformFloat64(t *testing.T) {
 	assert.True(t, number < 1)
 }
 
-func Test_Truncate(t *testing.T) {
-	number := Truncate(0.123456789, 1)
-	assert.Equal(t, 0.1, number)
-
-	number = Truncate(0.123456789, 2)
-	assert.Equal(t, 0.12, number)
-
-	number = Truncate(0.123456789, 5)
-	assert.Equal(t, 0.12345, number)
-
-	number = Truncate(0.123456789, 9)
-	assert.Equal(t, 0.123456789, number)
-
-	number = Truncate(0.1234567891, 9)
-	assert.Equal(t, 0.123456789, number)
-}
-
 func Test_DeterministicRandom(t *testing.T) {
 	testCases := []struct {
 		seedHex       string
