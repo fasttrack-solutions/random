@@ -1,4 +1,4 @@
-FROM golang:1.24-alpine3.21 AS build-env
+FROM golang:1.26.9-alpine3.24 AS build-env
 
 # Update apk
 RUN apk add --update --no-cache git gcc musl-dev openssh
@@ -22,7 +22,7 @@ RUN go build -o bin/grpc ./cmd/grpc
 ##
 ## Deploy
 ##
-FROM alpine:3.21
+FROM alpine:3.24
 
 WORKDIR /app
 
