@@ -1,4 +1,4 @@
-FROM golang:1.26.9-alpine3.24 AS build-env
+FROM golang:1.27.4-alpine3.24 AS build-env
 
 # Update apk
 RUN apk add --update --no-cache git gcc musl-dev openssh
